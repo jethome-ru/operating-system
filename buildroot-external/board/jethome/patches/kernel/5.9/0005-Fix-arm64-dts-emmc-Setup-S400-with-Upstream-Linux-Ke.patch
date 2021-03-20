@@ -1,14 +1,15 @@
-From 311d95d14ed315c91c8f6f9058adaec6681761a1 Mon Sep 17 00:00:00 2001
+From c07aa623e60d7845e6fc22342824be14c5bfc6da Mon Sep 17 00:00:00 2001
 From: Vyacheslav Bocharov <devel@lexina.in>
 Date: Mon, 1 Mar 2021 09:22:41 +0300
-Subject: [PATCH 8/9] Fix: dts:emmc: Setup S400 with Upstream Linux Kernel
+Subject: [PATCH 05/13] Fix: arm64: dts:emmc: Setup S400 with Upstream Linux
+ Kernel
 
 ---
  arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-index 724ee179b..c33c2b88c 100644
+index 724ee179b316..c33c2b88c8e9 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
 @@ -1769,7 +1769,7 @@ sd_emmc_c: mmc@7000 {

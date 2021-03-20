@@ -1,0 +1,76 @@
+From 0ce529e07f12e9798a03905aa642cf55e3471e58 Mon Sep 17 00:00:00 2001
+From: Vyacheslav Bocharov <devel@lexina.in>
+Date: Sat, 20 Mar 2021 16:00:31 +0300
+Subject: [PATCH 2/2] Fix: Jethome: fix j100 dts to hassos partitions
+
+---
+ .../amlogic/meson-axg-jethome-jethub-j100.dts | 52 +++++++++++++++++--
+ 1 file changed, 47 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-axg-jethome-jethub-j100.dts b/arch/arm64/boot/dts/amlogic/meson-axg-jethome-jethub-j100.dts
+index 3d0e516ad83a..86a02406fe29 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-axg-jethome-jethub-j100.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-axg-jethome-jethub-j100.dts
+@@ -108,12 +108,54 @@ wifi32k: wifi32k {
+ 		clock-frequency = <32768>;
+ 		pwms = <&pwm_ab 0 30518 0>; /* PWM_A at 32.768KHz */
+ 	};
+-
+ 	partitions: partitions {
+-		parts = <1>;
+-		part-0 = <&rootfs>;
+-		rootfs: rootfs {
+-			pname = "rootfs";
++		parts = <8>;
++		part-0 = <&boot>;
++		part-1 = <&bootstate>;
++		part-2 = <&kernela>;
++		part-3 = <&systema>;
++		part-4 = <&kernelb>;
++		part-5 = <&systemb>;
++		part-6 = <&overlay>;
++		part-7 = <&data>;
++
++		boot:boot {
++			pname = "boot";
++			size = <0x0 0x4000000>;
++			mask = <1>;
++		};
++		bootstate:bootstate {
++			pname = "bootstate";
++			size = <0x0 0x800000>;
++			mask = <4>;
++		};
++		kernela:kernela {
++			pname = "kernela";
++			size = <0x0 0x4000000>;
++			mask = <4>;
++		};
++		systema:systema {
++			pname = "systema";
++			size = <0x0 0x10000000>;
++			mask = <4>;
++		};
++		kernelb:kernelb {
++			pname = "kernelb";
++			size = <0x0 0x4000000>;
++			mask = <4>;
++		};
++		systemb:systemb {
++			pname = "systemb";
++			size = <0x0 0x10000000>;
++			mask = <4>;
++		};
++		overlay:overlay {
++			pname = "overlay";
++			size = <0x0 0x8000000>;
++			mask = <4>;
++		};
++		data:data {
++			pname = "data";
+ 			size = <0xffffffff 0xffffffff>;
+ 			mask = <4>;
+ 		};
+-- 
+2.25.1
+

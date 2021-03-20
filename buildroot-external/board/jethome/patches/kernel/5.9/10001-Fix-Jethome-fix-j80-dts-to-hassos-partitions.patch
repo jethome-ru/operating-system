@@ -1,0 +1,74 @@
+From 8bee18203231f15585605f6d650a07642479abae Mon Sep 17 00:00:00 2001
+From: Vyacheslav Bocharov <devel@lexina.in>
+Date: Sat, 20 Mar 2021 15:59:58 +0300
+Subject: [PATCH 1/2] Fix: Jethome: fix j80 dts to hassos partitions
+
+---
+ .../meson-gxl-s905w-jethome-jethub-j80.dts    | 51 +++++++++++++++++--
+ 1 file changed, 47 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905w-jethome-jethub-j80.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905w-jethome-jethub-j80.dts
+index d013c5d2b6d5..0168a72351d9 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905w-jethome-jethub-j80.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905w-jethome-jethub-j80.dts
+@@ -86,10 +86,53 @@ sdio_pwrseq: sdio-pwrseq {
+ 	};
+ 
+ 	partitions: partitions {
+-		parts = <1>;
+-		part-0 = <&rootfs>;
+-		rootfs: rootfs {
+-			pname = "rootfs";
++		parts = <8>;
++		part-0 = <&boot>;
++		part-1 = <&bootstate>;
++		part-2 = <&kernela>;
++		part-3 = <&systema>;
++		part-4 = <&kernelb>;
++		part-5 = <&systemb>;
++		part-6 = <&overlay>;
++		part-7 = <&data>;
++
++		boot:boot {
++			pname = "boot";
++			size = <0x0 0x4000000>;
++			mask = <1>;
++		};
++		bootstate:bootstate {
++			pname = "bootstate";
++			size = <0x0 0x800000>;
++			mask = <4>;
++		};
++		kernela:kernela {
++			pname = "kernela";
++			size = <0x0 0x4000000>;
++			mask = <4>;
++		};
++		systema:systema {
++			pname = "systema";
++			size = <0x0 0x10000000>;
++			mask = <4>;
++		};
++		kernelb:kernelb {
++			pname = "kernelb";
++			size = <0x0 0x4000000>;
++			mask = <4>;
++		};
++		systemb:systemb {
++			pname = "systemb";
++			size = <0x0 0x10000000>;
++			mask = <4>;
++		};
++		overlay:overlay {
++			pname = "overlay";
++			size = <0x0 0x8000000>;
++			mask = <4>;
++		};
++		data:data {
++			pname = "data";
+ 			size = <0xffffffff 0xffffffff>;
+ 			mask = <4>;
+ 		};
+-- 
+2.25.1
+
