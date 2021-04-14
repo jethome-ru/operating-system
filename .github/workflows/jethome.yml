@@ -1,0 +1,77 @@
+# This is a basic workflow to help you get started with Actions
+
+name: JetHome Development build
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    tags: [jethome_*]
+  pull_request:
+    tags: [jethome_*]
+  workflow_dispatch:
+
+jobs:
+  version:
+    name: Generate version
+    runs-on: self-hosted
+    outputs:
+      version_main: ${{ steps.version_main.outputs.version_main }}
+      version_dev: ${{ steps.version_dev.outputs.version_dev }}
+    steps:
+      - name: Generate Development build version
+        shell: bash
+        id: version_dev
+        run: |
+          version_dev="dev$(date --utc +'%Y%m%d')"
+          echo "Development version \"${version_dev}\""
+          echo "::set-output name=version_dev::${version_dev}"
+
+      - uses: actions/checkout@v2.3.4
+      - name: Get Major/Minor version
+        id: version_main
+        run: |
+          major=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_MAJOR | cut -d'=' -f2)
+          build=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_BUILD | cut -d'=' -f2)
+          echo "::set-output name=version_main::${major}.${build}"
+  build:
+    name: Release build for ${{ matrix.board.name }}
+    needs: version
+    strategy:
+      fail-fast: false
+      matrix:
+        board:
+          - {"name": "jethub_d1", "output": "jethub-d1", "runner": "self-hosted"}
+          - {"name": "jethub_h1", "output": "jethub-h1", "runner": "self-hosted"}
+    runs-on: ${{ matrix.board.runner }}
+
+    steps:
+      - name: Fix Permitions
+        run: sudo /usr/local/bin/fixprivileges.sh
+
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2.3.4
+
+      - name: Build container
+        run: docker build -t haos-builder .
+
+      - name: 'Add release PKI certs'
+        env:
+          RAUC_CERTIFICATE: ${{ secrets.RAUC_CERTIFICATE }}
+          RAUC_PRIVATE_KEY: ${{ secrets.RAUC_PRIVATE_KEY }}
+        run: |
+          echo -e "-----BEGIN CERTIFICATE-----\n${RAUC_CERTIFICATE}\n-----END CERTIFICATE-----" > cert.pem
+          echo -e "-----BEGIN PRIVATE KEY-----\n${RAUC_PRIVATE_KEY}\n-----END PRIVATE KEY-----" > key.pem
+
+      - name: Build
+        run: |
+          BUILDER_UID="$(id -u)"
+          BUILDER_GID="$(id -g)"
+          docker run --rm --privileged -v "${GITHUB_WORKSPACE}:/build" \
+            -e BUILDER_UID="${BUILDER_UID}" -e BUILDER_GID="${BUILDER_GID}" \
+            -v "${{ matrix.board.runner }}-build-cache:/cache" \
+            haos-builder make BUILDDIR=/build VERSION_DEV=${{ needs.version.outputs.version_dev }} ${{ matrix.board.name }}
+
+      - name: Upload firmware
+        run: |
+         rsync -av release/* repo@update.jethome.ru:/var/www/update.jethome.ru/haos/dev/
