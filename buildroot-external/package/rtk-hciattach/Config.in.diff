@@ -1,9 +1,0 @@
---- /dev/null
-+++ b/buildroot-external/package/rtk-hciattach/Config.in
-@@ -0,0 +1,6 @@
-+menuconfig BR2_PACKAGE_RTK_HCIATTACH
-+	bool "Realtek hciattach"
-+	help
-+	  Hciattach is used to attach a serial UART to 
-+	  the Bluetooth stack as HCI transport interface.
-+
