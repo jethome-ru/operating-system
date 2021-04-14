@@ -1,0 +1,27 @@
+--- /dev/null
++++ b/buildroot-external/package/jethome-boot/Config.in
+@@ -0,0 +1,24 @@
++config BR2_PACKAGE_JETHOME_BOOT
++	bool "JetHome Secure Boot Loader"
++	depends on BR2_TARGET_UBOOT
++	help
++	  Augment uboot for secure loading on jethome targets.
++
++if BR2_PACKAGE_JETHOME_BOOT
++choice
++	prompt "Target"
++	default BR2_PACKAGE_JETHOME_BOOT_JETHUB_D1
++
++config BR2_PACKAGE_JETHOME_BOOT_JETHUB_D1
++	bool "JetHub-D1"
++	help
++	  For the JetHome JetHub-D1 (j100)
++
++config BR2_PACKAGE_JETHOME_BOOT_JETHUB_H1
++	bool "JetHub-H1"
++	help
++	  For the JetHome JetHub-H1 (j80)
++
++endchoice
++
++endif
