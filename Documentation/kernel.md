@@ -17,3 +17,5 @@ Default Kernel tree: 5.10
 | Odroid-N2 | 5.10.33 |
 | Odroid-XU4 | 5.10.33 |
 | Generic x86-64 | 5.10.33 |
+| JetHub D1 | 5.9.16 |
+| JetHub H1 | 5.9.16 |
