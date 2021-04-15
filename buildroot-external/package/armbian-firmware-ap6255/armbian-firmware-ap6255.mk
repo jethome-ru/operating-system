@@ -5,8 +5,7 @@
 ################################################################################
 
 ARMBIAN_FIRMWARE_AP6255_VERSION = 292e1e5b5bc5756e9314ea6d494d561422d23264
-ARMBIAN_FIRMWARE_AP6255_SITE = https://github.com/armbian/firmware
-ARMBIAN_FIRMWARE_AP6255_SITE_METHOD = git
+ARMBIAN_FIRMWARE_AP6255_SITE = $(call github,armbian,firmware,$(ARMBIAN_FIRMWARE_AP6255_VERSION))
 
 # AP6255 WiFi/BT combo firmware
 ifeq ($(BR2_PACKAGE_ARMBIAN_FIRMWARE_AP6255),y)
