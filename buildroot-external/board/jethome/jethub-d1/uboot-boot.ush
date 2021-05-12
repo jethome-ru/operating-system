@@ -14,7 +14,7 @@ setenv kernel_addr  0x11000000
 setenv ramdisk_addr 0x13000000
 setenv LINUX /Image
 setenv FDT /meson-axg-jethome-jethub-j100.dtb
-setenv bootargs "rootfstype=squashfs ro rootwait console=ttyAML0,115200n8 console=serial no_console_suspend consoleblank=0 fsck.fix=yes fsck.repair=yes net.ifnames=0 zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor systemd.machine_id=${MACHINE_ID} cgroup_enable=memory"
+setenv cmdline "rootfstype=squashfs ro rootwait console=ttyAML0,115200n8 console=serial no_console_suspend consoleblank=0 fsck.fix=yes fsck.repair=yes net.ifnames=0 zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor systemd.machine_id=${MACHINE_ID} cgroup_enable=memory"
 setenv bootargs_a "root=/dev/mmcblk1p9"
 setenv bootargs_b "root=/dev/mmcblk1p11"
 
@@ -28,9 +28,9 @@ setenv storebootstate " \
     mmc write ${bootstate_ram} ${bootstate_blk} ${bootstate_blocks}; \
     saveenv;"
 
-mmc dev ${mmc_dev}; 
+mmc dev ${mmc_dev};
 
-run loadbootstate; 
+run loadbootstate;
 
 test ${BOOT_ORDER} -ge 0 || setenv BOOT_ORDER 'A B'; 
 test ${BOOT_A_LEFT} -ge 0 || setenv BOOT_A_LEFT 3; 
