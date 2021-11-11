@@ -2,7 +2,7 @@ name: Test dispatch
 
 on:
   repository_dispatch:
-    types: ["hassos-dispatch"]
+    types: ["haos-dispatch"]
 
 jobs:
   show-dispatch:
