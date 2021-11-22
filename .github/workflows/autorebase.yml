@@ -23,6 +23,7 @@ jobs:
           repository: jethome-ru/homeassistant-operating-system
           path: rebase_haos
           ref: dev
+          token: ${{ secrets.HASSOS_UPDATE_TOKEN }}
       - name: Rebase haos repository (dev)
         run: |
           cd rebase_haos
@@ -45,6 +46,7 @@ jobs:
           repository: jethome-ru/homeassistant-operating-system
           path: rebase_haos
           ref: rel-7
+          token: ${{ secrets.HASSOS_UPDATE_TOKEN }}
       - name: Rebase haos repository (rel-7)
         run: |
           cd rebase_haos
