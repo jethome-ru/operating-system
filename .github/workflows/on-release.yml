@@ -1,0 +1,54 @@
+# Home Assistant Operating System release build workflow
+
+name: Release build
+
+on:
+  release:
+    types: [published, created]
+
+jobs:
+  validate_release:
+    name: Validate release
+    runs-on: [ self-hosted ]
+    outputs:
+      version: ${{ steps.version_check.outputs.version }}
+      version_dev: ${{ steps.version_check.outputs.version_dev }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Validate version
+        id: version_check
+        run: |
+          major=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_MAJOR | cut -d'=' -f2)
+          build=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_BUILD | cut -d'=' -f2)
+          tag_major=$(echo "${{ github.event.release.tag_name }}" | cut -d '.' -f 1)
+          tag_build=$(echo "${{ github.event.release.tag_name }}" | cut -d '.' -f 2)
+          tag_dev=$(echo "${{ github.event.release.tag_name }}" | cut -d '.' -f 3)
+          if [ "${major}.${build}" != "${tag_major}.${tag_build}" ]; then
+            echo "Version number in Buildroot metadata is does not match tag (${major}.${build} vs ${{ github.event.release.tag_name }})."
+            exit 1
+          fi
+          if [ "" != "${tag_dev}" ]; then
+            echo "Note: Release build with custom dev part: ${tag_dev}."
+            echo "::set-output name=version::${major}.${build}.${tag_dev}"
+          else
+            echo "::set-output name=version::${major}.${build}"
+          fi
+          echo "::set-output name=version_dev::${tag_dev}"
+ buildhaos:
+    name: build haos
+    needs: validate_release
+    uses: jethome-ru/homeassistant-builder/.github/workflows/release-haos-build.yml@main
+    with:
+      buildbranch: ${GITHUB_SHA}
+      releasetag: ${{ github.event.release.tag_name }}
+      upload_url: ${{ github.event.release.upload_url }}
+
+    secrets:
+      token: ${{ secrets.TOKEN }}
+      SSHKEY: ${{ secrets.SSHKEY }}
+      SSHKNOWNHOSTS: ${{ secrets.SSHKNOWNHOSTS }}
+      GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+      HAOS_CERT: ${{ secrets.HAOS_CERT }}
+      HAOS_KEY: ${{ secrets.HAOS_KEY }}
+
